@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>ctx-roslyn-helper</AssemblyName>
+    <RootNamespace>RoslynHelper</RootNamespace>
+  </PropertyGroup>
+  <!-- No external NuGet dependencies: System.Text.Json and System.Xml.Linq
+       are included in the net10.0 framework. MSBuild/Roslyn are not used
+       for the MVP commands (projectSummary) — csproj/sln files are parsed
+       directly. Roslyn semantic workspace will be added in a later prompt
+       once SDK version alignment is established. -->
+</Project>

@@ -1,0 +1,3 @@
+{"id": 1, "method": "loadSolution", "params": {"path": "C:\\gocode\\ctx\\tools\\roslyn-helper\\RoslynHelper.sln"}}
+{"id": 2, "method": "projectSummary", "params": {}}
+{"id": 3, "method": "shutdown", "params": {}}
