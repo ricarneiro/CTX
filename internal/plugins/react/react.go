@@ -23,6 +23,9 @@ func (r *reactPlugin) Command(ctx *core.Context) *cobra.Command {
 	return &cobra.Command{
 		Use:   "react",
 		Short: r.ShortDescription(),
+		// placeholder=true tells ctx auto to show a placeholder message instead of
+		// attempting to invoke this plugin's subcommands.
+		Annotations: map[string]string{"placeholder": "true"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			fmt.Fprintln(ctx.Stderr, "Not implemented yet — coming in a future prompt")
 			return nil
