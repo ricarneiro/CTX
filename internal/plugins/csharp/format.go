@@ -3,6 +3,7 @@ package csharp
 import (
 	"fmt"
 	"io"
+	"path/filepath"
 	"strings"
 
 	"github.com/ricarneiro/ctx/internal/output"
@@ -246,4 +247,178 @@ func writeMultiTargeting(w io.Writer, projects []helper.ProjectInfo) {
 		}
 	}
 	fmt.Fprintln(w)
+}
+
+// ─── Outline formatter ───────────────────────────────────────────────────────
+
+// WriteOutline formats an OutlineResult as dense markdown.
+func WriteOutline(w io.Writer, o *helper.OutlineResult) error {
+	fileName := filepath.Base(o.Path)
+	output.H1(w, "Outline: "+fileName)
+
+	if o.HasSyntaxErrors {
+		fmt.Fprintf(w, "> ⚠️ File has syntax errors — outline may be incomplete.\n\n")
+	}
+
+	// Overview
+	typeSummary := outlineTypesSummary(o.Types)
+	output.KeyValue(w, "path", "`"+o.Path+"`")
+	if o.Namespace != "" {
+		output.KeyValue(w, "namespace", "`"+o.Namespace+"`")
+	}
+	output.KeyValue(w, "lines", fmt.Sprintf("%d", o.LineCount))
+	output.KeyValue(w, "types", typeSummary)
+	fmt.Fprintln(w)
+
+	// Usings
+	if len(o.Usings) > 0 {
+		output.H2(w, "Usings")
+		for _, u := range o.Usings {
+			fmt.Fprintf(w, "- `%s`\n", u)
+		}
+		fmt.Fprintln(w)
+	}
+
+	// Types
+	if len(o.Types) > 0 {
+		output.H2(w, "Types")
+		for i := range o.Types {
+			writeOutlineType(w, &o.Types[i], 3)
+		}
+	}
+
+	return nil
+}
+
+func outlineTypesSummary(types []helper.OutlineType) string {
+	counts := map[string]int{}
+	for _, t := range types {
+		counts[t.Kind]++
+	}
+	if len(counts) == 0 {
+		return "none"
+	}
+	// Fixed display order
+	order := []string{"class", "interface", "struct", "record", "record struct", "enum"}
+	parts := []string{}
+	for _, k := range order {
+		if n, ok := counts[k]; ok {
+			parts = append(parts, fmt.Sprintf("%d %s", n, k))
+			delete(counts, k)
+		}
+	}
+	// Any remaining unknown kinds
+	for k, n := range counts {
+		parts = append(parts, fmt.Sprintf("%d %s", n, k))
+	}
+	return strings.Join(parts, ", ")
+}
+
+func writeOutlineType(w io.Writer, t *helper.OutlineType, headingLevel int) {
+	// Build header: `kind Name : Base1, Base2` (modifiers)
+	header := t.Kind + " " + t.Name
+	if len(t.BaseTypes) > 0 {
+		header += " : " + strings.Join(t.BaseTypes, ", ")
+	}
+	heading := "`" + header + "`"
+	if len(t.Modifiers) > 0 {
+		heading += " (" + strings.Join(t.Modifiers, ", ") + ")"
+	}
+	writeHeading(w, headingLevel, heading)
+
+	// Group members by kind, in canonical order
+	writeOutlineMembers(w, t.Members, headingLevel+1)
+
+	// Nested types — shown as bullet list for simplicity
+	if len(t.Nested) > 0 {
+		writeHeading(w, headingLevel+1, "Nested types")
+		for _, n := range t.Nested {
+			nestedHeader := n.Kind + " " + n.Name
+			if len(n.BaseTypes) > 0 {
+				nestedHeader += " : " + strings.Join(n.BaseTypes, ", ")
+			}
+			prefix := modPrefix(n.Modifiers)
+			fmt.Fprintf(w, "- `%s%s`\n", prefix, nestedHeader)
+		}
+		fmt.Fprintln(w)
+	}
+}
+
+func writeOutlineMembers(w io.Writer, members []helper.OutlineMember, headingLevel int) {
+	// Collect by kind
+	var fields, constructors, properties, methods, events []helper.OutlineMember
+	for _, m := range members {
+		switch m.Kind {
+		case "field":
+			fields = append(fields, m)
+		case "constructor":
+			constructors = append(constructors, m)
+		case "property":
+			properties = append(properties, m)
+		case "method":
+			methods = append(methods, m)
+		case "event":
+			events = append(events, m)
+		}
+	}
+
+	if len(fields) > 0 {
+		writeHeading(w, headingLevel, "Fields")
+		for _, m := range fields {
+			writeMemberLine(w, m)
+		}
+		fmt.Fprintln(w)
+	}
+	if len(constructors) > 0 {
+		writeHeading(w, headingLevel, "Constructor")
+		for _, m := range constructors {
+			writeMemberLine(w, m)
+		}
+		fmt.Fprintln(w)
+	}
+	if len(properties) > 0 {
+		writeHeading(w, headingLevel, "Properties")
+		for _, m := range properties {
+			writeMemberLine(w, m)
+		}
+		fmt.Fprintln(w)
+	}
+	if len(methods) > 0 {
+		writeHeading(w, headingLevel, "Methods")
+		for _, m := range methods {
+			writeMemberLine(w, m)
+		}
+		fmt.Fprintln(w)
+	}
+	if len(events) > 0 {
+		writeHeading(w, headingLevel, "Events")
+		for _, m := range events {
+			writeMemberLine(w, m)
+		}
+		fmt.Fprintln(w)
+	}
+}
+
+func writeMemberLine(w io.Writer, m helper.OutlineMember) {
+	prefix := modPrefix(m.Modifiers)
+	obsolete := ""
+	if m.IsObsolete {
+		obsolete = " _(obsolete)_"
+	}
+	lineRef := ""
+	if m.Line > 0 {
+		lineRef = fmt.Sprintf(" (line %d)", m.Line)
+	}
+	fmt.Fprintf(w, "- `%s%s`%s%s\n", prefix, m.Signature, lineRef, obsolete)
+}
+
+func modPrefix(mods []string) string {
+	if len(mods) == 0 {
+		return ""
+	}
+	return strings.Join(mods, " ") + " "
+}
+
+func writeHeading(w io.Writer, level int, text string) {
+	fmt.Fprintf(w, "%s %s\n\n", strings.Repeat("#", level), text)
 }

@@ -27,5 +27,6 @@ Requires the Roslyn helper (ctx-roslyn-helper) to be built.
 See 'ctx csharp project --help' for details.`,
 	}
 	cmd.AddCommand(projectCmd(ctx))
+	cmd.AddCommand(outlineCmd(ctx))
 	return cmd
 }

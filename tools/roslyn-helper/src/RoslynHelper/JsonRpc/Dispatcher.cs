@@ -31,6 +31,7 @@ public sealed class Dispatcher
             ["ping"]           = new PingHandler(),
             ["loadSolution"]   = new LoadSolutionHandler(workspace),
             ["projectSummary"] = new ProjectSummaryHandler(workspace),
+            ["outline"]        = new OutlineHandler(),
         };
     }
 

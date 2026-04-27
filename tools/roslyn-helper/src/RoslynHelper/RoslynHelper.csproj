@@ -8,9 +8,11 @@
     <AssemblyName>ctx-roslyn-helper</AssemblyName>
     <RootNamespace>RoslynHelper</RootNamespace>
   </PropertyGroup>
-  <!-- No external NuGet dependencies: System.Text.Json and System.Xml.Linq
-       are included in the net10.0 framework. MSBuild/Roslyn are not used
-       for the MVP commands (projectSummary) — csproj/sln files are parsed
-       directly. Roslyn semantic workspace will be added in a later prompt
-       once SDK version alignment is established. -->
+  <ItemGroup>
+    <!-- Pure C# syntax parser — no MSBuild, no SDK coupling.
+         Used by OutlineHandler for CSharpSyntaxTree.ParseText + SyntaxWalker.
+         Unlike Workspaces.MSBuild (removed in Prompt 3), this package
+         has no runtime dependency on the installed SDK. -->
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.13.0" />
+  </ItemGroup>
 </Project>

@@ -120,6 +120,52 @@ func (c *Client) ProjectSummary() (*ProjectSummary, error) {
 	return &r, nil
 }
 
+// --- Outline types ---
+
+// OutlineResult is the structural outline of a single .cs file.
+type OutlineResult struct {
+	Path           string        `json:"path"`
+	Namespace      string        `json:"namespace"`
+	LineCount      int           `json:"lineCount"`
+	Usings         []string      `json:"usings"`
+	Types          []OutlineType `json:"types"`
+	HasSyntaxErrors bool         `json:"hasSyntaxErrors"`
+}
+
+// OutlineType describes a type (class, interface, struct, record, enum) in the file.
+type OutlineType struct {
+	Kind      string          `json:"kind"`
+	Name      string          `json:"name"`
+	Modifiers []string        `json:"modifiers"`
+	BaseTypes []string        `json:"baseTypes"`
+	Members   []OutlineMember `json:"members"`
+	Nested    []OutlineType   `json:"nested"`
+}
+
+// OutlineMember describes a member of a type (method, property, field, event, constructor).
+type OutlineMember struct {
+	Kind       string   `json:"kind"`
+	Signature  string   `json:"signature"`
+	Modifiers  []string `json:"modifiers"`
+	Line       int      `json:"line"`
+	IsObsolete bool     `json:"isObsolete,omitempty"`
+}
+
+// Outline requests a structural outline of the given .cs file.
+// Does not require a solution to be loaded.
+func (c *Client) Outline(path string) (*OutlineResult, error) {
+	params := map[string]string{"path": path}
+	raw, err := c.proc.Send("outline", params)
+	if err != nil {
+		return nil, wrapRpc("outline", err)
+	}
+	var r OutlineResult
+	if err := json.Unmarshal(raw, &r); err != nil {
+		return nil, fmt.Errorf("outline: decode response: %w", err)
+	}
+	return &r, nil
+}
+
 // wrapRpc wraps RpcError values into user-friendly messages.
 func wrapRpc(method string, err error) error {
 	var rpcErr *RpcError
