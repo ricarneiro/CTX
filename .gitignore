@@ -1,0 +1,33 @@
+# Compiled binaries
+/ctx
+/ctx.exe
+cmd/ctx/ctx
+cmd/ctx/ctx.exe
+/bin/
+/dist/
+
+# Test and coverage artifacts
+*.test
+*.out
+coverage.out
+coverage.html
+
+# Profiling
+*.prof
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Claude Code local settings
+.claude/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+desktop.ini
