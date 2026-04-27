@@ -22,7 +22,8 @@ Each subcommand targets a specific stack:
   ctx react     — React / TypeScript analysis
 
 Output is always UTF-8 markdown on stdout, suitable for piping into Claude.`,
-	SilenceUsage: true,
+	SilenceUsage:  true,
+	SilenceErrors: true, // plugins print their own errors to stderr
 }
 
 // Execute runs the root command. Called by cmd/ctx/main.go.
