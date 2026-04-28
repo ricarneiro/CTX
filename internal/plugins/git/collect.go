@@ -171,8 +171,8 @@ func collectRepoInfo(dir string) (repoInfo, error) {
 func collectCommits(dir string, n int) ([]commit, error) {
 	out, err := gitCmd(dir, "log", fmt.Sprintf("-n%d", n), "--pretty=format:%h|%at|%an|%s")
 	if err != nil || out == "" {
-		// Empty repo or no commits — not a hard error.
-		return nil, nil
+		// Empty repo or no commits — not an error for our purposes.
+		return nil, nil //nolint:nilerr // intentional: git failures here mean "nothing to show"
 	}
 	var commits []commit
 	for _, line := range strings.Split(out, "\n") {
@@ -254,7 +254,7 @@ func parseNumstat(dir string, cached bool) ([]fileChange, error) {
 	}
 	out, err := gitCmd(dir, args...)
 	if err != nil || out == "" {
-		return nil, nil
+		return nil, nil //nolint:nilerr // no changes or not in a git repo — not an error
 	}
 	var changes []fileChange
 	for _, line := range strings.Split(out, "\n") {
@@ -280,7 +280,7 @@ func parseNumstat(dir string, cached bool) ([]fileChange, error) {
 func parseUntracked(dir string) ([]string, error) {
 	out, err := gitCmd(dir, "status", "--porcelain=v1")
 	if err != nil || out == "" {
-		return nil, nil
+		return nil, nil //nolint:nilerr // clean working tree or not in a git repo — not an error
 	}
 	var untracked []string
 	for _, line := range strings.Split(out, "\n") {

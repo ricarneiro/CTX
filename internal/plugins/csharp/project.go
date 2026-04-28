@@ -44,8 +44,8 @@ func runProject(ctx *core.Context) error {
 	}
 	defer client.Close()
 
-	if _, err := client.LoadSolution(slnPath); err != nil {
-		fmt.Fprintln(ctx.Stderr, err.Error())
+	if _, loadErr := client.LoadSolution(slnPath); loadErr != nil {
+		fmt.Fprintln(ctx.Stderr, loadErr.Error())
 		return errExit
 	}
 

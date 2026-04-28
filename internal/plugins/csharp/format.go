@@ -223,13 +223,14 @@ func writeMultiTargeting(w io.Writer, projects []helper.ProjectInfo) {
 
 	if len(frameworkSets) == 0 {
 		// All same framework, or single framework each
-		if len(allFrameworks) == 1 {
+		switch len(allFrameworks) {
+		case 0:
+			fmt.Fprintf(w, "No target frameworks detected.\n\n")
+		case 1:
 			for tf := range allFrameworks {
 				fmt.Fprintf(w, "None — all projects target `%s`.\n\n", tf)
 			}
-		} else if len(allFrameworks) == 0 {
-			fmt.Fprintf(w, "No target frameworks detected.\n\n")
-		} else {
+		default:
 			// Multiple different single targets
 			for _, p := range projects {
 				if len(p.TargetFrameworks) > 0 {

@@ -80,6 +80,36 @@ runtime into the Go binary.
 
 See `docs/DECISIONS.md` for the full rationale behind each architectural choice.
 
+## Development
+
+### Prerequisites
+- Go 1.26+
+- .NET SDK 10.0+ (for Roslyn helper)
+- golangci-lint (`go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest`)
+
+### Build
+```sh
+go build -o ctx.exe ./cmd/ctx
+```
+
+### Tests & lint
+```sh
+go vet ./...
+golangci-lint run ./...
+```
+
+### Pre-commit hooks
+```sh
+git config core.hooksPath .githooks
+# On Linux/macOS also: chmod +x .githooks/pre-commit
+```
+
+### Roslyn helper
+```sh
+cd tools/roslyn-helper
+dotnet publish src/RoslynHelper -c Release -r win-x64 --self-contained false -o publish/
+```
+
 ## Contributing
 
 Contributions welcome. See `CONTRIBUTING.md` (coming soon) for guidelines.

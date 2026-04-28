@@ -1,0 +1,36 @@
+#!/bin/sh
+# ctx pre-commit hook — shell entry point (works in Git Bash on Windows)
+# Delegates to pre-commit.ps1 on Windows, runs natively on Linux/macOS.
+#
+# To activate:
+#   git config core.hooksPath .githooks
+
+set -e
+
+if command -v powershell.exe >/dev/null 2>&1; then
+  # Windows: delegate to PowerShell script
+  exec powershell.exe -ExecutionPolicy Bypass -File .githooks/pre-commit.ps1
+fi
+
+# Linux / macOS: run directly
+echo "Running gofmt..."
+unformatted=$(gofmt -l .)
+if [ -n "$unformatted" ]; then
+  echo "Files not formatted with gofmt:"
+  echo "$unformatted"
+  echo
+  echo "Run: gofmt -w ."
+  exit 1
+fi
+
+echo "Running go vet..."
+go vet ./...
+
+if command -v golangci-lint >/dev/null 2>&1; then
+  echo "Running golangci-lint..."
+  golangci-lint run ./...
+else
+  echo "warning: golangci-lint not installed, skipping"
+fi
+
+echo "pre-commit checks passed"

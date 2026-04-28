@@ -13,14 +13,14 @@ type Request struct {
 type Response struct {
 	ID     int             `json:"id"`
 	Result json.RawMessage `json:"result,omitempty"`
-	Error  *RpcError       `json:"error,omitempty"`
+	Error  *RPCError       `json:"error,omitempty"`
 }
 
 // RpcError is a structured error from the helper process.
-type RpcError struct {
+type RPCError struct {
 	Code    string          `json:"code"`
 	Message string          `json:"message"`
 	Data    json.RawMessage `json:"data,omitempty"`
 }
 
-func (e *RpcError) Error() string { return e.Code + ": " + e.Message }
+func (e *RPCError) Error() string { return e.Code + ": " + e.Message }

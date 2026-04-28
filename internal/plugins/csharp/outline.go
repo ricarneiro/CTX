@@ -39,7 +39,7 @@ func runOutline(ctx *core.Context, file string) error {
 		return errExit
 	}
 
-	if _, err := os.Stat(abs); err != nil {
+	if _, statErr := os.Stat(abs); statErr != nil {
 		fmt.Fprintf(ctx.Stderr, "file not found: %s\n", abs)
 		return errExit
 	}

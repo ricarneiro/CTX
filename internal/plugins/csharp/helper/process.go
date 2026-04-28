@@ -73,8 +73,8 @@ func (p *Process) Send(method string, params interface{}) (json.RawMessage, erro
 	}
 	line = append(line, '\n')
 
-	if _, err := p.stdin.Write(line); err != nil {
-		return nil, fmt.Errorf("helper write (process may have crashed): %w", err)
+	if _, werr := p.stdin.Write(line); werr != nil {
+		return nil, fmt.Errorf("helper write (process may have crashed): %w", werr)
 	}
 
 	respLine, err := p.stdout.ReadString('\n')

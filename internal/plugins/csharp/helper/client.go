@@ -84,7 +84,7 @@ type PackageReference struct {
 func (c *Client) Ping() (*PingResult, error) {
 	raw, err := c.proc.Send("ping", nil)
 	if err != nil {
-		return nil, wrapRpc("ping", err)
+		return nil, wrapRPC("ping", err)
 	}
 	var r PingResult
 	if err := json.Unmarshal(raw, &r); err != nil {
@@ -98,7 +98,7 @@ func (c *Client) LoadSolution(path string) (*LoadSolutionResult, error) {
 	params := map[string]string{"path": path}
 	raw, err := c.proc.Send("loadSolution", params)
 	if err != nil {
-		return nil, wrapRpc("loadSolution", err)
+		return nil, wrapRPC("loadSolution", err)
 	}
 	var r LoadSolutionResult
 	if err := json.Unmarshal(raw, &r); err != nil {
@@ -111,7 +111,7 @@ func (c *Client) LoadSolution(path string) (*LoadSolutionResult, error) {
 func (c *Client) ProjectSummary() (*ProjectSummary, error) {
 	raw, err := c.proc.Send("projectSummary", nil)
 	if err != nil {
-		return nil, wrapRpc("projectSummary", err)
+		return nil, wrapRPC("projectSummary", err)
 	}
 	var r ProjectSummary
 	if err := json.Unmarshal(raw, &r); err != nil {
@@ -124,12 +124,12 @@ func (c *Client) ProjectSummary() (*ProjectSummary, error) {
 
 // OutlineResult is the structural outline of a single .cs file.
 type OutlineResult struct {
-	Path           string        `json:"path"`
-	Namespace      string        `json:"namespace"`
-	LineCount      int           `json:"lineCount"`
-	Usings         []string      `json:"usings"`
-	Types          []OutlineType `json:"types"`
-	HasSyntaxErrors bool         `json:"hasSyntaxErrors"`
+	Path            string        `json:"path"`
+	Namespace       string        `json:"namespace"`
+	LineCount       int           `json:"lineCount"`
+	Usings          []string      `json:"usings"`
+	Types           []OutlineType `json:"types"`
+	HasSyntaxErrors bool          `json:"hasSyntaxErrors"`
 }
 
 // OutlineType describes a type (class, interface, struct, record, enum) in the file.
@@ -157,7 +157,7 @@ func (c *Client) Outline(path string) (*OutlineResult, error) {
 	params := map[string]string{"path": path}
 	raw, err := c.proc.Send("outline", params)
 	if err != nil {
-		return nil, wrapRpc("outline", err)
+		return nil, wrapRPC("outline", err)
 	}
 	var r OutlineResult
 	if err := json.Unmarshal(raw, &r); err != nil {
@@ -166,9 +166,9 @@ func (c *Client) Outline(path string) (*OutlineResult, error) {
 	return &r, nil
 }
 
-// wrapRpc wraps RpcError values into user-friendly messages.
-func wrapRpc(method string, err error) error {
-	var rpcErr *RpcError
+// wrapRPC wraps RPCError values into user-friendly messages.
+func wrapRPC(method string, err error) error {
+	var rpcErr *RPCError
 	if errors.As(err, &rpcErr) {
 		switch rpcErr.Code {
 		case "E_NOT_FOUND":

@@ -46,8 +46,8 @@ var skipDirs = map[string]bool{
 
 // findings holds raw evidence gathered during the directory walk.
 type findings struct {
-	slnFiles     []string  // forward-slash relative paths to .sln files
-	csprojFiles  []string  // forward-slash relative paths to .csproj/.fsproj/.vbproj files
+	slnFiles      []string // forward-slash relative paths to .sln files
+	csprojFiles   []string // forward-slash relative paths to .csproj/.fsproj/.vbproj files
 	hasGlobalJSON bool
 	packageJSONs  []pkgJSON
 	hasGoModRoot  bool // go.mod is a direct child of rootDir (depth 1)
@@ -68,7 +68,7 @@ func scanDir(rootDir string, maxDepth int) (findings, error) {
 
 	err := filepath.WalkDir(rootDir, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
-			return nil // skip unreadable entries silently
+			return nil //nolint:nilerr // skip unreadable entries; returning err would abort the walk
 		}
 		if path == rootDir {
 			return nil // skip root itself
