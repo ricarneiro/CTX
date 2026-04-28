@@ -1,3 +1,12 @@
+# ctx
+
+Ferramenta CLI para compactar contexto de código antes de enviar ao Claude — economize tokens, expanda o que cabe na janela.
+[→ Leia em Português](#pt-br) · [→ Read in English](#en)
+
+---
+
+<a id="pt-br"></a>
+
 # ctx — anti-tokens CLI para Claude Code
 
 > Analise seu projeto localmente. Envie ao Claude resumos densos, não arquivos brutos.
@@ -128,6 +137,8 @@ go build -o ctx.exe ./cmd/ctx
 MIT — veja [LICENSE](LICENSE).
 
 ---
+
+<a id="en"></a>
 
 # ctx — anti-tokens CLI for Claude Code
 
