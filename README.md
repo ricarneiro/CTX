@@ -24,11 +24,18 @@ Ambas as sessões iniciadas com `/clear` — condições equivalentes.
 
 ## Instalação
 
+**1. Instale o Go**
+Baixe em https://go.dev/dl/ e siga o instalador. Requer Go 1.22+.
+
+**2. Instale o ctx**
 ```sh
 go install github.com/ricarneiro/ctx/cmd/ctx@latest
 ```
 
-Requer Go 1.22+.
+**3. Verifique**
+```sh
+ctx --version
+```
 
 ## Uso
 
@@ -104,11 +111,18 @@ Both sessions started with `/clear` — equivalent conditions.
 
 ## Installation
 
+**1. Install Go**
+Download from https://go.dev/dl/ and run the installer. Requires Go 1.22+.
+
+**2. Install ctx**
 ```sh
 go install github.com/ricarneiro/ctx/cmd/ctx@latest
 ```
 
-Requires Go 1.22+.
+**3. Verify**
+```sh
+ctx --version
+```
 
 ## Usage
 
