@@ -63,11 +63,55 @@ ctx csharp project | clip     # Windows
 ctx csharp project | pbcopy   # macOS
 ```
 
-Ou referencie em um `CLAUDE.md`:
+## Integrando com Claude Code
 
-```markdown
-Run `ctx csharp project` to get the project overview before making changes.
+Para que o Claude Code use o `ctx` automaticamente, adicione o `ctx` ao PATH do Windows e inclua as instruções abaixo no `CLAUDE.md` do seu projeto.
+
+### 1. Adicionar ctx ao PATH no Windows
+
+1. Copie o `ctx.exe` para uma pasta fixa (ex: `C:\tools\ctx\`)
+2. Abra **Configurações do Sistema → Variáveis de Ambiente**
+3. Em "Variáveis do sistema", selecione `Path` → **Editar**
+4. Clique em **Novo** e adicione `C:\tools\ctx\`
+5. Confirme com OK e reinicie o terminal
+
+### 2. Adicionar ao CLAUDE.md do projeto
+
+Crie ou edite o arquivo `CLAUDE.md` na raiz do seu projeto e inclua:
+
+````markdown
+# Project instructions
+
+## `ctx` — compact code analysis tool (use to save tokens)
+
+This project has `ctx` in PATH. It produces compact markdown summaries of code structure.
+
+### When to use `ctx` (saves tokens)
+
+- **Understanding the whole project:** run `ctx csharp project` instead of exploring files one by one.
+- **Understanding a large file (100+ lines):** run `ctx csharp outline <file>` before reading the full file. Only read the full file if you need method body details.
+- **Checking build errors:** run `ctx csharp errors` instead of `dotnet build` (filtered output, 90% smaller).
+- **Understanding git state:** run `ctx git` instead of running multiple git commands.
+
+### When NOT to use `ctx`
+
+- If you already know which specific small file to read, just read it directly.
+- If you need to see method body logic, read the file — `ctx outline` only shows signatures.
+- For simple `Search()` by pattern across files, search is already efficient.
+
+### Commands
+
 ```
+ctx csharp project           # solution overview: projects, refs, packages, structure
+ctx csharp outline <file.cs> # class/method signatures without bodies (~85% smaller)
+ctx csharp errors            # dotnet build filtered to errors + top warnings (~90% smaller)
+ctx git                      # branch, status, recent commits, diff summary
+```
+
+### Rule of thumb
+
+Ask yourself: "Am I about to read multiple files to understand structure?" If yes → `ctx` first. If you just need one specific file → read it directly.
+````
 
 ## Contribuindo
 
@@ -150,11 +194,55 @@ ctx csharp project | pbcopy   # macOS
 ctx csharp project | clip     # Windows
 ```
 
-Or reference it in a `CLAUDE.md`:
+## Integrating with Claude Code
 
-```markdown
-Run `ctx csharp project` to get the project overview before making changes.
+To have Claude Code use `ctx` automatically, add `ctx` to your Windows PATH and include the instructions below in your project's `CLAUDE.md`.
+
+### 1. Add ctx to PATH on Windows
+
+1. Copy `ctx.exe` to a fixed folder (e.g. `C:\tools\ctx\`)
+2. Open **System Settings → Environment Variables**
+3. Under "System variables", select `Path` → **Edit**
+4. Click **New** and add `C:\tools\ctx\`
+5. Confirm with OK and restart your terminal
+
+### 2. Add to your project's CLAUDE.md
+
+Create or edit `CLAUDE.md` at the root of your project and include:
+
+````markdown
+# Project instructions
+
+## `ctx` — compact code analysis tool (use to save tokens)
+
+This project has `ctx` in PATH. It produces compact markdown summaries of code structure.
+
+### When to use `ctx` (saves tokens)
+
+- **Understanding the whole project:** run `ctx csharp project` instead of exploring files one by one.
+- **Understanding a large file (100+ lines):** run `ctx csharp outline <file>` before reading the full file. Only read the full file if you need method body details.
+- **Checking build errors:** run `ctx csharp errors` instead of `dotnet build` (filtered output, 90% smaller).
+- **Understanding git state:** run `ctx git` instead of running multiple git commands.
+
+### When NOT to use `ctx`
+
+- If you already know which specific small file to read, just read it directly.
+- If you need to see method body logic, read the file — `ctx outline` only shows signatures.
+- For simple `Search()` by pattern across files, search is already efficient.
+
+### Commands
+
 ```
+ctx csharp project           # solution overview: projects, refs, packages, structure
+ctx csharp outline <file.cs> # class/method signatures without bodies (~85% smaller)
+ctx csharp errors            # dotnet build filtered to errors + top warnings (~90% smaller)
+ctx git                      # branch, status, recent commits, diff summary
+```
+
+### Rule of thumb
+
+Ask yourself: "Am I about to read multiple files to understand structure?" If yes → `ctx` first. If you just need one specific file → read it directly.
+````
 
 ## Contributing
 
